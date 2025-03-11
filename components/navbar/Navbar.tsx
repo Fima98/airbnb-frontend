@@ -9,7 +9,7 @@ const Navbar = async () => {
     const userId = await getUserId();
     console.log("User ID", userId);
     return (
-        <nav className="w-full fixed top-0 left-0 py-6 border-b bg-white z-10">
+        <nav className="w-full fixed top-0 left-0 py-2 border-b bg-white z-10">
             <div className="max-w-[1440px] mx-auto items-center px-6">
                 <div className="flex justify-between">
                     <Link href="/" className="mt-3">

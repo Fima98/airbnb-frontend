@@ -9,8 +9,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        // 'airbnb': "#EC4C60",
         'airbnb': "#fc1c4a",
+        // 'airbnb': "#FFC107",
         'airbnb-dark': "#e0183d",
       },
     },

@@ -1,20 +1,23 @@
 import ReservationSidevar from "@/components/properties/ReservationSidevar";
 import Image from "next/image";
-
+import { getUserId } from "@/lib/actions";
 import apiService from "@/services/apiService";
 
-const RoomDetailPage = async ({ params }: { params: { id: string } }) => {
-    const property = await apiService.get(`/api/properties/${params.id}/`);
+const RoomDetailPage = async (props: { params: { id: string } }) => {
+    const params = await props.params;
+    const { id } = params;
+    const property = await apiService.get(`/api/properties/${id}/`);
+    const userId = await getUserId();
     console.log(property);
+
     return (
         <main className="max-w-[1440px] px-10 mb-12">
-            {/* <h1 className="text-3xl pb-4">Room detail, idk</h1> */}
-            <div className="w-full h-[56vh] overflow-hidden relative rounded-xl mb-4">
+            <div className="relative w-full h-[52vh] lg:h-[70vh] mb-4 overflow-hidden rounded-xl">
                 <Image
-                    fill
-                    className="object-cover w-full h-full"
                     src={property.image_url}
                     alt={property.title}
+                    fill
+                    className="object-cover"
                 />
             </div>
 
@@ -28,8 +31,8 @@ const RoomDetailPage = async ({ params }: { params: { id: string } }) => {
                     <hr />
                     <div className="py-6 flex items-center space-x-4">
                         <Image
-                            src={"/profile_avatar.jpg"}
-                            alt="profile avatar"
+                            src={property.host.avatar_url}
+                            alt={property.host.name}
                             width={48}
                             height={48}
                             className="rounded-full"
@@ -43,7 +46,7 @@ const RoomDetailPage = async ({ params }: { params: { id: string } }) => {
                         {property.description}
                     </div>
                 </div>
-                <ReservationSidevar property={property} />
+                <ReservationSidevar property={property} userId={userId} />
             </div>
         </main>
     );

@@ -43,7 +43,39 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
         (_, i) => i + 1
     );
 
-    // Рахуємо загальну суму при зміні дат
+    const handleReservation = async () => {
+        if (userId) {
+            if (dateRange.startDate && dateRange.endDate) {
+                const formData = new FormData();
+                formData.append("property", property.id);
+                formData.append("guests", guests.toString());
+                formData.append(
+                    "start_date",
+                    format(dateRange.startDate, "yyyy-MM-dd")
+                );
+                formData.append(
+                    "end_date",
+                    format(dateRange.endDate, "yyyy-MM-dd")
+                );
+                formData.append("number_of_nights", nights.toString());
+                formData.append("total_price", total.toString());
+
+                const response = await apiService.post(
+                    `/api/properties/${property.id}/book/`,
+                    formData
+                );
+
+                if (response.status === "success") {
+                    console.log(response);
+                } else {
+                    console.log("Error:", response);
+                }
+            }
+        } else {
+            loginModal.open();
+        }
+    };
+
     useEffect(() => {
         if (dateRange.startDate && dateRange.endDate) {
             const days = differenceInDays(
@@ -52,7 +84,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
             );
 
             if (days && property.price_per_night) {
-                const _fee = ((days * property.price_per_night) / 100) * 5; // 5% комісії
+                const _fee = ((days * property.price_per_night) / 100) * 5;
                 setFee(_fee);
                 setTotal(days * property.price_per_night + _fee);
                 setNights(days);
@@ -65,7 +97,6 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
         }
     }, [dateRange, property.price_per_night]);
 
-    // Функція, що оновлює стан dateRange
     const _setDateRange = (ranges: any) => {
         const { selection } = ranges || {};
         if (!selection?.startDate || !selection?.endDate) {
@@ -75,8 +106,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
         const newStartDate = new Date(selection.startDate);
         const newEndDate = new Date(selection.endDate);
 
-        // Якщо endDate менша за startDate, зміщуємо endDate на +1 день
-        if (newEndDate < newStartDate) {
+        if (newEndDate <= newStartDate) {
             newEndDate.setDate(newStartDate.getDate() + 1);
         }
 
@@ -99,7 +129,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
                         <span className="text-sm">
                             {format(
                                 dateRange.startDate || new Date(),
-                                "MM/dd/yyyy"
+                                "dd/MM/yyyy"
                             )}
                         </span>
                     </div>
@@ -109,7 +139,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
                         <span className="text-sm">
                             {format(
                                 dateRange.endDate || new Date(),
-                                "MM/dd/yyyy"
+                                "dd/MM/yyyy"
                             )}
                         </span>
                     </div>
@@ -132,27 +162,24 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
                         ))}
                     </select>
                 </div>
-                {showCalendar && (
-                    <div className="absolute bg-white rounded-xl border p-3 border-gray-400 top-0 w-full">
-                        <Calendar
-                            value={dateRange}
-                            onChange={(ranges) => {
-                                _setDateRange(ranges);
-                            }}
-                        />
-                        <button
-                            onClick={() => setShowCalendar(!showCalendar)}
-                            className="bg-black text-white px-2 text-md py-1 rounded-lg"
-                        >
-                            Close
-                        </button>
-                    </div>
-                )}
             </div>
+            {showCalendar && (
+                <div className="mt-4 bg-white rounded-xl border border-gray-400 top-0 w-full">
+                    <Calendar
+                        value={dateRange}
+                        onChange={(ranges) => {
+                            _setDateRange(ranges);
+                        }}
+                    />
+                </div>
+            )}
 
-            <div className="w-full mb-6 py-3 text-center text-white bg-airbnb hover:bg-airbnb-dark rounded-xl mt-4">
+            <button
+                onClick={handleReservation}
+                className="w-full mb-6 py-3 text-center text-white bg-airbnb hover:bg-airbnb-dark rounded-xl mt-4"
+            >
                 Reserve
-            </div>
+            </button>
 
             <div className="mb-4 flex justify-center">
                 <p>You won’t be charged yet</p>

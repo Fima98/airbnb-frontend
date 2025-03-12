@@ -65,7 +65,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
                     formData
                 );
 
-                if (response.status === "success") {
+                if (response.success) {
                     console.log(response);
                 } else {
                     console.log("Error:", response);

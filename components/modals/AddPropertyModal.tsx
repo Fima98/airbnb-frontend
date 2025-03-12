@@ -68,13 +68,13 @@ const AddPropertyModal = () => {
                 "/api/properties/create/",
                 formData
             );
-            if (response.status === "success") {
+            if (response.success) {
                 console.log(response);
                 addPropertyModal.close();
                 router.push("/");
                 router.refresh();
             } else {
-                console.log("Error:", response.data);
+                console.log("Error:", response);
 
                 const tmpErrors: string[] = Object.values(response).map(
                     (error: any) => {

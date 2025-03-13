@@ -37,6 +37,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
     const [dateRange, setDateRange] = useState<Range>(initialDateRange);
     const [guests, setGuests] = useState<number>(1);
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
+    const [bookedDates, setBookedDates] = useState<Date[]>([]);
 
     const guestsRange = Array.from(
         { length: property.guests },
@@ -47,7 +48,6 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
         if (userId) {
             if (dateRange.startDate && dateRange.endDate) {
                 const formData = new FormData();
-                formData.append("property", property.id);
                 formData.append("guests", guests.toString());
                 formData.append(
                     "start_date",
@@ -57,8 +57,6 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
                     "end_date",
                     format(dateRange.endDate, "yyyy-MM-dd")
                 );
-                formData.append("number_of_nights", nights.toString());
-                formData.append("total_price", total.toString());
 
                 const response = await apiService.post(
                     `/api/properties/${property.id}/book/`,
@@ -75,6 +73,33 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
             loginModal.open();
         }
     };
+
+    const getReservations = async () => {
+        const reservations = await apiService.get(
+            `/api/properties/${property.id}/reservations/`
+        );
+        console.log(`Reservations:`, reservations);
+
+        let dates: Date[] = [];
+        reservations.forEach((reservation: any) => {
+            const start = new Date(reservation.start_date);
+            const end = new Date(reservation.end_date);
+
+            for (
+                let d = new Date(start);
+                d <= end;
+                d.setDate(d.getDate() + 1)
+            ) {
+                dates.push(new Date(d));
+            }
+        });
+
+        setBookedDates(dates);
+    };
+
+    useEffect(() => {
+        getReservations();
+    }, []);
 
     useEffect(() => {
         if (dateRange.startDate && dateRange.endDate) {
@@ -170,6 +195,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
                         onChange={(ranges) => {
                             _setDateRange(ranges);
                         }}
+                        bookedDates={bookedDates}
                     />
                 </div>
             )}

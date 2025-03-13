@@ -8,7 +8,7 @@ const RoomDetailPage = async (props: { params: { id: string } }) => {
     const { id } = params;
     const property = await apiService.get(`/api/properties/${id}/`);
     const userId = await getUserId();
-    console.log(property);
+    console.log(`Property:`, property);
 
     return (
         <main className="max-w-[1440px] px-10 mb-12">
@@ -18,6 +18,7 @@ const RoomDetailPage = async (props: { params: { id: string } }) => {
                     alt={property.title}
                     fill
                     className="object-cover"
+                    priority
                 />
             </div>
 
@@ -35,7 +36,7 @@ const RoomDetailPage = async (props: { params: { id: string } }) => {
                             alt={property.host.name}
                             width={48}
                             height={48}
-                            className="rounded-full"
+                            className="rounded-full w-10 h-10"
                         />
                         <p className="text-sm font-semibold">
                             Hosted by {property.host.name}

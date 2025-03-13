@@ -2,7 +2,6 @@ import { getAccessToken } from "@/lib/actions";
 
 const apiService = {
     get: async function(url: string): Promise<any> {
-        console.log('GET Request URL:', url);
         const token = await getAccessToken();
 
         const headers: HeadersInit = {
@@ -26,7 +25,6 @@ const apiService = {
     },
 
     post: async function(url: string, data: any): Promise<any> {
-        console.log('POST Request URL:', url);
         const token = await getAccessToken();
     
         const headers: HeadersInit = {

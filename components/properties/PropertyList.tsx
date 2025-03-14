@@ -11,11 +11,18 @@ export type PropertyType = {
     image_url: string;
 };
 
-const PropertyList = () => {
+interface PropertyListProps {
+    hostId: string;
+}
+
+const PropertyList: React.FC<PropertyListProps> = ({ hostId }) => {
     const [properties, setProperties] = useState<PropertyType[]>([]);
 
     const getProperties = async () => {
-        const url = "/api/properties";
+        let url = "/api/properties/";
+        if (hostId) {
+            url += `?host=${hostId}`;
+        }
         const response = await apiService.get(url);
         console.log(response);
         setProperties(response);

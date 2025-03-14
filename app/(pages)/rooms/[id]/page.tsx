@@ -2,6 +2,7 @@ import ReservationSidevar from "@/components/properties/ReservationSidevar";
 import Image from "next/image";
 import { getUserId } from "@/lib/actions";
 import apiService from "@/services/apiService";
+import Link from "next/link";
 
 const RoomDetailPage = async (props: { params: { id: string } }) => {
     const params = await props.params;
@@ -30,18 +31,26 @@ const RoomDetailPage = async (props: { params: { id: string } }) => {
                         · {property.bathrooms} bathrooms
                     </span>
                     <hr />
-                    <div className="py-6 flex items-center space-x-4">
-                        <Image
-                            src={property.host.avatar_url}
-                            alt={property.host.name}
-                            width={48}
-                            height={48}
-                            className="rounded-full w-10 h-10"
-                        />
-                        <p className="text-sm font-semibold">
-                            Hosted by {property.host.name}
-                        </p>
-                    </div>
+                    <Link
+                        href={`/users/${property.host.id}`}
+                        className="py-6 flex items-center space-x-4"
+                    >
+                        <div className="py-6 flex items-center space-x-4">
+                            {property.host.avatar_url && (
+                                <Image
+                                    src={property.host.avatar_url}
+                                    alt={property.host.name}
+                                    width={48}
+                                    height={48}
+                                    className="rounded-full w-10 h-10"
+                                />
+                            )}
+
+                            <p className="text-sm font-semibold">
+                                Hosted by {property.host.name}
+                            </p>
+                        </div>
+                    </Link>
                     <hr />
                     <div className="py-6 text-sm font-medium">
                         {property.description}

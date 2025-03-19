@@ -31,7 +31,7 @@ export default function RootLayout({
         <html lang="en">
             <body className={`${poppins.variable} antialiased`}>
                 <Navbar />
-                <div className="pt-32 ">{children}</div>
+                <div className="pt-24 ">{children}</div>
 
                 <LoginModal />
                 <SignUpModal />

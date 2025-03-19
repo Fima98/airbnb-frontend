@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { differenceInDays, format } from "date-fns";
+import { differenceInDays, format, set } from "date-fns";
 import { Range } from "react-date-range";
 
 import Calendar from "../forms/Calendar";
@@ -37,7 +37,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
     const [dateRange, setDateRange] = useState<Range>(initialDateRange);
     const [guests, setGuests] = useState<number>(1);
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
-    const [bookedDates, setBookedDates] = useState<Date[]>([]);
+    const [reservedDates, setReservedDates] = useState<Date[]>([]);
 
     const guestsRange = Array.from(
         { length: property.guests },
@@ -59,7 +59,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
                 );
 
                 const response = await apiService.post(
-                    `/api/properties/${property.id}/book/`,
+                    `/api/properties/${property.id}/reserve/`,
                     formData
                 );
 
@@ -94,7 +94,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
             }
         });
 
-        setBookedDates(dates);
+        setReservedDates(dates);
     };
 
     useEffect(() => {
@@ -195,7 +195,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
                         onChange={(ranges) => {
                             _setDateRange(ranges);
                         }}
-                        bookedDates={bookedDates}
+                        reservedDates={reservedDates}
                     />
                 </div>
             )}

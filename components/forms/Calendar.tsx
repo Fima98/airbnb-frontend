@@ -7,13 +7,13 @@ import "react-date-range/dist/theme/default.css";
 interface DateRangePickerProps {
     value: Range;
     onChange: (value: RangeKeyDict) => void;
-    bookedDates?: Date[];
+    reservedDates?: Date[];
 }
 
 const Calendar: React.FC<DateRangePickerProps> = ({
     value,
     onChange,
-    bookedDates,
+    reservedDates,
 }) => {
     return (
         <>
@@ -25,7 +25,7 @@ const Calendar: React.FC<DateRangePickerProps> = ({
                 direction="horizontal"
                 showDateDisplay={false}
                 minDate={new Date()}
-                disabledDates={bookedDates}
+                disabledDates={reservedDates}
             />
         </>
     );

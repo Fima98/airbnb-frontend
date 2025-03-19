@@ -4,10 +4,16 @@ import PropertyList from "@/components/properties/PropertyList";
 import apiService from "@/services/apiService";
 import { getUserId } from "@/lib/actions";
 
-const HostDetailPage = async ({ params }: { params: { id: string } }) => {
-    const host = await apiService.get(`/api/auth/${params.id}/`);
-    console.log(`Host:`, host);
+const HostDetailPage = async ({
+    params: paramsPromise,
+}: {
+    params: Promise<{ id: string }>;
+}) => {
+    const { id } = await paramsPromise;
+
+    const host = await apiService.get(`/api/auth/${id}/`);
     const userId = await getUserId();
+
     return (
         <main className="max-w-[1440px] mx-auto px-6 pb-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -25,7 +31,7 @@ const HostDetailPage = async ({ params }: { params: { id: string } }) => {
                         <h1 className="mt-4 text-xl font-semibold">
                             {host.name}
                         </h1>
-                        {userId != params.id && <ContactButton />}
+                        {userId != id && <ContactButton />}
                     </div>
                 </aside>
                 <div className="col-span-1 md:col-span-3 pl-0 md:pl-6">
@@ -33,7 +39,7 @@ const HostDetailPage = async ({ params }: { params: { id: string } }) => {
                         {host.name}'s listings
                     </h1>
                     <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        <PropertyList hostId={params.id} />
+                        <PropertyList hostId={id} />
                     </div>
                 </div>
             </div>

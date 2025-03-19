@@ -12,7 +12,7 @@ export type PropertyType = {
 };
 
 interface PropertyListProps {
-    hostId: string;
+    hostId?: string | null;
 }
 
 const PropertyList: React.FC<PropertyListProps> = ({ hostId }) => {

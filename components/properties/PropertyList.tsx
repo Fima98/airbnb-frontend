@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import PropertyListItem from "./PropertyListItem";
 import apiService from "@/services/apiService";
-import { is } from "date-fns/locale";
 
 export type PropertyType = {
     id: string;
@@ -15,9 +14,10 @@ export type PropertyType = {
 
 interface PropertyListProps {
     hostId?: string | null;
+    favorites?: boolean | null;
 }
 
-const PropertyList: React.FC<PropertyListProps> = ({ hostId }) => {
+const PropertyList: React.FC<PropertyListProps> = ({ hostId, favorites }) => {
     const [properties, setProperties] = useState<PropertyType[]>([]);
 
     const markFavorite = (id: string, isFavorite: boolean) => {
@@ -41,6 +41,8 @@ const PropertyList: React.FC<PropertyListProps> = ({ hostId }) => {
         let url = "/api/properties/";
         if (hostId) {
             url += `?host=${hostId}`;
+        } else if (favorites) {
+            url += "?is_favorites=true";
         }
         const response = await apiService.get(url);
         console.log(response);

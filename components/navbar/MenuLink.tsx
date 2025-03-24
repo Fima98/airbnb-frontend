@@ -1,5 +1,3 @@
-"use client";
-
 interface MenuLinkProps {
     label: string;
     onClick: () => void;

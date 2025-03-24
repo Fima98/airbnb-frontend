@@ -1,4 +1,4 @@
-import ConversationDetail from "@/components/inbox/ConversationDetail";
+import ConversationDetail from "@/components/inbox/ChatDetail";
 
 const Conversation = () => {
     return (

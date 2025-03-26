@@ -31,7 +31,7 @@ const HostDetailPage = async ({
                         <h1 className="mt-4 text-xl font-semibold">
                             {host.name}
                         </h1>
-                        {userId != id && <ContactButton />}
+                        {userId != id && <ContactButton userId={id} />}
                     </div>
                 </aside>
                 <div className="col-span-1 md:col-span-3 pl-0 md:pl-6">

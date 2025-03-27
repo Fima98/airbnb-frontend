@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import React from "react"
+import React from "react";
 
 interface ModalProps {
   label: string;
   close: () => void;
-  content: React.ReactElement;
+  content: React.ReactElement | null;
   isOpen: boolean;
 }
 

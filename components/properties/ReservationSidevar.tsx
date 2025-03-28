@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { differenceInDays, format, set } from "date-fns";
+import { differenceInDays, format } from "date-fns";
 import { Range } from "react-date-range";
 
-import Calendar from "../forms/Calendar";
+import CalendarModal from "../modals/CalendarModal";
 import apiService from "@/services/apiService";
 import useLoginModal from "@/hooks/useLoginModal";
+import useCalendarModal from "@/hooks/useCalendarModal";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -30,13 +31,13 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
   userId,
 }) => {
   const loginModal = useLoginModal();
+  const calendarModal = useCalendarModal();
 
   const [fee, setFee] = useState<number>(0);
   const [nights, setNights] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [dateRange, setDateRange] = useState<Range>(initialDateRange);
   const [guests, setGuests] = useState<number>(1);
-  const [showCalendar, setShowCalendar] = useState<boolean>(false);
   const [reservedDates, setReservedDates] = useState<Date[]>([]);
 
   const guestsRange = Array.from({ length: property.guests }, (_, i) => i + 1);
@@ -51,8 +52,6 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
           format(dateRange.startDate, "yyyy-MM-dd")
         );
         formData.append("end_date", format(dateRange.endDate, "yyyy-MM-dd"));
-
-        console.log(dateRange.startDate, dateRange.endDate);
 
         const response = await apiService.post(
           `/api/properties/${property.id}/reserve/`,
@@ -75,33 +74,29 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
     const reservations = await apiService.get(
       `/api/properties/${property.id}/reservations/`
     );
-    console.log(`Reservations:`, reservations);
+    console.log("Reservations:", reservations);
 
     let dates: Date[] = [];
     reservations.forEach((reservation: any) => {
-      // Parse the start and end dates as UTC dates
       const start = new Date(
         Date.UTC(
-          parseInt(reservation.start_date.substring(0, 4)), // Year
-          parseInt(reservation.start_date.substring(5, 7)) - 1, // Month (zero-based)
-          parseInt(reservation.start_date.substring(8, 10)) // Day
+          parseInt(reservation.start_date.substring(0, 4)),
+          parseInt(reservation.start_date.substring(5, 7)) - 1,
+          parseInt(reservation.start_date.substring(8, 10))
         )
       );
 
       const end = new Date(
         Date.UTC(
-          parseInt(reservation.end_date.substring(0, 4)), // Year
-          parseInt(reservation.end_date.substring(5, 7)) - 1, // Month (zero-based)
-          parseInt(reservation.end_date.substring(8, 10)) // Day
+          parseInt(reservation.end_date.substring(0, 4)),
+          parseInt(reservation.end_date.substring(5, 7)) - 1,
+          parseInt(reservation.end_date.substring(8, 10))
         )
       );
 
-      // Fix for the local timezone causing the shift by a day
-      // Set the time to noon UTC to avoid it rolling over to the previous day
       start.setUTCHours(12, 0, 0, 0);
       end.setUTCHours(12, 0, 0, 0);
 
-      // Iterate through the range of dates
       for (
         let d = new Date(start);
         d <= end;
@@ -121,7 +116,6 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
   useEffect(() => {
     if (dateRange.startDate && dateRange.endDate) {
       const days = differenceInDays(dateRange.endDate, dateRange.startDate);
-
       if (days && property.price_per_night) {
         const _fee = ((days * property.price_per_night) / 100) * 5;
         setFee(_fee);
@@ -138,9 +132,7 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
 
   const _setDateRange = (ranges: any) => {
     const { selection } = ranges || {};
-    if (!selection?.startDate || !selection?.endDate) {
-      return;
-    }
+    if (!selection?.startDate || !selection?.endDate) return;
 
     const newStartDate = new Date(selection.startDate);
     const newEndDate = new Date(selection.endDate);
@@ -158,18 +150,17 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
 
   return (
     <aside className="p-6 mt-2 col-span-2 rounded-xl border border-gray-200 shadow-xl">
-      <div className="border relative border-gray-400 rounded-xl cursor-pointer">
-        <div
-          className="flex items-center border-b border-gray-400 px-3 cursor-pointer"
-          onClick={() => setShowCalendar(!showCalendar)}
-        >
+      <div
+        className="border relative border-gray-400 rounded-xl cursor-pointer"
+        onClick={() => calendarModal.open()}
+      >
+        <div className="flex items-center border-b border-gray-400 px-3">
           <div className="flex-1 w-1/2 border-r py-3 border-gray-400">
             <h3 className="text-xs font-bold">CHECK-IN</h3>
             <span className="text-sm">
               {format(dateRange.startDate || new Date(), "dd/MM/yyyy")}
             </span>
           </div>
-
           <div className="flex-1 text-right py-3">
             <h3 className="text-xs font-bold">CHECK-OUT</h3>
             <span className="text-sm">
@@ -177,7 +168,6 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
             </span>
           </div>
         </div>
-
         <div className="p-3">
           <label className="block font-bold text-xs" htmlFor="guests">
             GUESTS
@@ -196,17 +186,12 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
           </select>
         </div>
       </div>
-      {showCalendar && (
-        <div className="mt-4 bg-white rounded-xl border border-gray-400 top-0 w-full">
-          <Calendar
-            value={dateRange}
-            onChange={(ranges) => {
-              _setDateRange(ranges);
-            }}
-            reservedDates={reservedDates}
-          />
-        </div>
-      )}
+
+      <CalendarModal
+        initialDateRange={dateRange}
+        reservedDates={reservedDates}
+        onSelectDates={_setDateRange}
+      />
 
       <button
         onClick={handleReservation}
@@ -218,19 +203,19 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
       <div className="mb-4 flex justify-center">
         <p>You won’t be charged yet</p>
       </div>
-      <div className="mb-4 flex justify-between align-center items-center">
+      <div className="mb-4 flex justify-between items-center">
         <p>
           ${property.price_per_night} x {nights}{" "}
           {nights === 1 ? "night" : "nights"}
         </p>
         <p>${property.price_per_night * nights}</p>
       </div>
-      <div className="mb-4 flex justify-between align-center items-center">
+      <div className="mb-4 flex justify-between items-center">
         <p>Cleaning fee</p>
         <p>${fee.toFixed(2)}</p>
       </div>
       <hr />
-      <div className="mt-4 flex justify-between align-center items-center">
+      <div className="mt-4 flex justify-between items-center">
         <p className="font-semibold">Total before taxes</p>
         <p className="font-semibold">${total.toFixed(2)}</p>
       </div>

@@ -45,7 +45,7 @@ const SignUpModal = () => {
 
   const content = (
     <div className="">
-      <h2 className="mb-6 text-2xl font-semibold">Welcome to Airdnd</h2>
+      <h2 className="mb-6 text-2xl font-semibold">Welcome to Airbnb</h2>
       <form action={submitSignUp} className="space-y-4">
         <input
           onChange={(e) => setFirstName(e.target.value)}

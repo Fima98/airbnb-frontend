@@ -150,11 +150,11 @@ const ReservationSidevar: React.FC<ReservationSidevarProps> = ({
 
   return (
     <aside className="p-6 mt-2 col-span-2 rounded-xl border border-gray-200 shadow-xl">
-      <div
-        className="border relative border-gray-400 rounded-xl cursor-pointer"
-        onClick={() => calendarModal.open()}
-      >
-        <div className="flex items-center border-b border-gray-400 px-3">
+      <div className="border relative border-gray-400 rounded-xl cursor-pointer">
+        <div
+          onClick={() => calendarModal.open()}
+          className="flex items-center border-b border-gray-400 px-3"
+        >
           <div className="flex-1 w-1/2 border-r py-3 border-gray-400">
             <h3 className="text-xs font-bold">CHECK-IN</h3>
             <span className="text-sm">

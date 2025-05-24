@@ -6,7 +6,7 @@ const SearchFilters = () => {
   const { country, checkIn, checkOut, guests } = searchModal.filters;
 
   return (
-    <div className="max-w-[680px] h-[56px] lg:h-[64px] flex flex-row items-center justify-between border rounded-full">
+    <div className="max-w-[800px] h-[56px] lg:h-[64px] flex flex-row items-center justify-between border rounded-full">
       <div className="hidden lg:block">
         <div className="flex flex-row items-center justify-between">
           {/* Location */}
